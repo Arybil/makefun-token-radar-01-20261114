@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: MIT
+// Dev-only browser QA; native Node22 WebSocket, no browser automation packages.
+import {writeFileSync,mkdirSync} from 'node:fs';
+const endpoint=process.env.RADAR_CDP||'http://127.0.0.1:9222';
+const {webSocketDebuggerUrl}=await (await fetch(endpoint+'/json/version')).json();
+const socket=new WebSocket(webSocketDebuggerUrl);
+await new Promise((ok,no)=>{socket.onopen=ok;socket.onerror=no;});
+let id=0;const pending=new Map(),events=[];
+socket.onmessage=e=>{const r=JSON.parse(e.data);if(r.id){const p=pending.get(r.id);pending.delete(r.id);r.error?p.reject(new Error(JSON.stringify(r.error))):p.resolve(r.result);}else events.push(r);};
+const send=(method,params={},sessionId)=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});socket.send(JSON.stringify({id:n,method,params,...sessionId?{sessionId}:{}}));});
+const url=new URL('../out/dashboard/index.html',import.meta.url).href;
+const {targetId}=await send('Target.createTarget',{url:'about:blank'});
+const {sessionId}=await send('Target.attachToTarget',{targetId,flatten:true});
+const cdp=(method,params={})=>send(method,params,sessionId);
+const evaluate=async expression=>{const r=await cdp('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.text+': '+r.exceptionDetails.exception?.description);return r.result.value;};
+await cdp('Page.enable');await cdp('Runtime.enable');await cdp('Network.enable');
+await cdp('Network.setBlockedURLs',{urls:['http://*','https://*']});
+await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1380,deviceScaleFactor:1,mobile:false});
+await cdp('Page.navigate',{url});
+for(let tries=0;tries<50;tries++){if(await evaluate("!!document.querySelector('#rows tr')"))break;await new Promise(r=>setTimeout(r,100));}
+const checks=[];
+const check=async(name,expression)=>{const result=await evaluate(expression);checks.push({name,result});if(!result.pass)throw new Error(name+': '+JSON.stringify(result));};
+mkdirSync(new URL('../evidence/',import.meta.url),{recursive:true});
+try {
+  await check('initial board is real, offline and within viewport',`({pass:document.querySelectorAll('#rows tr').length===8&&document.documentElement.scrollWidth<=innerWidth,rows:document.querySelectorAll('#rows tr').length,height:document.body.scrollHeight,width:innerWidth})`);
+  await evaluate("document.querySelector('button[data-open=\"steakhouse-financial\"]').click()");
+  await check('range marker represents base value',`(() => {const r=RadarModel.rank(RADAR_DATA)[0],b=document.querySelector('.band-track');const expected=(r.implied_value_usd-r.low_usd)/(r.high_usd-r.low_usd)*100,actual=parseFloat(getComputedStyle(b,'::after').left)/b.clientWidth*100;return {expected,actual,pass:Math.abs(expected-actual)<1};})()`);
+  await evaluate("document.querySelector('#detail').close()");
+  await check('all 192 protocol inspectors render their actual farm plans',`(() => {const rows=RadarModel.rank(RADAR_DATA);const errors=[];for(const r of rows){const s=document.querySelector('#search');s.value=r.slug;s.dispatchEvent(new Event('input',{bubbles:true}));const b=document.querySelector('button[data-open="'+r.slug+'"]');if(!b){errors.push(r.slug+':missing');continue;}b.click();if(document.querySelector('#detail-title').textContent!==r.name||document.querySelectorAll('#plan-body li').length!==r.farm_steps.length)errors.push(r.slug+':detail');document.querySelector('#detail').close();}document.querySelector('#reset').click();return {pass:!errors.length,count:rows.length,errors};})()`);
+  await evaluate("document.querySelector('#search').value='no-such-protocol-zzzz';document.querySelector('#search').dispatchEvent(new Event('input',{bubbles:true}))");
+  await check('empty state and reset',`({pass:!document.querySelector('#empty').hidden&&document.querySelectorAll('#rows tr').length===0})`);
+  await evaluate("document.querySelector('#reset').click();document.querySelector('[data-sort=\"name\"]').click()");
+  await check('name sorting changes displayed order',`(() => {const names=[...document.querySelectorAll('.protocol-button')].map(b=>b.textContent);return {names,pass:names.every((n,i)=>!i||names[i-1]<=n)};})()`);
+  await evaluate("document.querySelector('#reset').click();document.querySelector('[data-save]').click();document.querySelector('[data-scope=\"saved\"]').click()");
+  await check('saved shortlist',`({pass:document.querySelectorAll('#rows tr').length===1&&JSON.parse(localStorage.getItem('afterglow-saved')).length===1})`);
+  await evaluate("document.querySelector('[data-save]').click();document.querySelector('#reset').click();document.querySelector('button[data-open=\"steakhouse-financial\"]').click();document.querySelector('#capital').value='250';document.querySelector('#capital').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('#gas').value='3';document.querySelector('#gas').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-check]').click()");
+  await check('budget adjustment and checklist persistence',`({pass:document.querySelector('.budget').textContent.includes('$250')&&document.querySelector('.budget').textContent.includes('$12')&&JSON.parse(localStorage.getItem('afterglow-checks'))['steakhouse-financial-0']===true})`);
+  await evaluate("document.querySelector('[data-check]').click();document.querySelector('#detail').close();document.querySelector('#model-open').click()");
+  await check('methodology dialog',`({pass:document.querySelector('#method').open&&document.querySelector('#method-content').textContent.includes('n / (n + 5)')})`);
+  await evaluate("document.querySelector('#method').close()");
+  await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+  await new Promise(r=>setTimeout(r,200));
+  await check('mobile contains its wide table in a scroll region',`({pass:document.querySelector('.table-wrap').clientWidth<document.querySelector('.table-wrap').scrollWidth&&getComputedStyle(document.querySelector('.table-wrap')).overflowX==='auto'&&document.querySelector('main').getBoundingClientRect().width<=innerWidth,width:innerWidth,documentWidth:document.documentElement.scrollWidth,wrap:[...document.querySelectorAll('.table-wrap, main, .board')].map(e=>[e.className,getComputedStyle(e).overflowX,e.getBoundingClientRect().width]),overflow:[...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>innerWidth+2).slice(0,12).map(e=>[e.tagName,e.className,e.getBoundingClientRect().width])})`);
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1280,deviceScaleFactor:1,mobile:false});
+  await evaluate("document.querySelector('#reset').click();window.scrollTo(0,0);document.activeElement.blur()");
+  const capture=async(name)=>{await new Promise(r=>setTimeout(r,120));const shot=await cdp('Page.captureScreenshot',{format:'jpeg',quality:99,fromSurface:true});const bytes=Buffer.from(shot.data,'base64');writeFileSync(new URL('../screenshots/'+name,import.meta.url),bytes);return {name,bytes:bytes.length};};
+  mkdirSync(new URL('../screenshots/',import.meta.url),{recursive:true});
+  const screenshots=[];screenshots.push(await capture('1-board.jpg'));
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1050,deviceScaleFactor:1,mobile:false});
+  await evaluate("document.querySelector('button[data-open=\"steakhouse-financial\"]').click();document.activeElement.blur()");
+  screenshots.push(await capture('2-detail.jpg'));
+  await evaluate("document.querySelector('#detail').close();document.querySelector('[data-scope=\"early\"]').click();document.querySelector('#category').value='Lending';document.querySelector('#category').dispatchEvent(new Event('change',{bubbles:true}));window.scrollTo(0,0);document.activeElement.blur()");
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1280,deviceScaleFactor:1,mobile:false});
+  await check('filtered below-floor Lending view has only real matching rows',`(() => {const slugs=[...document.querySelectorAll('#rows tr')].map(x=>x.dataset.row),all=RadarModel.rank(RADAR_DATA);return {slugs,count:document.querySelector('#result-count').textContent,pass:slugs.length>0&&slugs.every(s=>all.some(r=>r.slug===s&&r.category==='Lending'&&r.tvl_usd<50000000))};})()`);
+  screenshots.push(await capture('3-filtered.jpg'));
+  const exceptions=events.filter(e=>e.method==='Runtime.exceptionThrown').map(e=>e.params.exceptionDetails.text);
+  const network=events.filter(e=>e.method==='Network.requestWillBeSent'&&/^https?:/.test(e.params.request.url)).map(e=>e.params.request.url);
+  checks.push({name:'no browser exceptions or network attempts',result:{pass:!exceptions.length&&!network.length,exceptions,network}});
+  if(exceptions.length||network.length)throw new Error('Browser exceptions or network attempts');
+  writeFileSync(new URL('../evidence/screenshots.json',import.meta.url),JSON.stringify(screenshots,null,2)+'\n');
+  console.log(JSON.stringify({checks,screenshots},null,2));
+} catch(error){console.error(error.message);process.exitCode=1;}
+writeFileSync(new URL('../evidence/browser-qa.json',import.meta.url),JSON.stringify({targetId,checks},null,2)+'\n');
+await send('Target.closeTarget',{targetId});socket.close();

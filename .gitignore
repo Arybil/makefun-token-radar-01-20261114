@@ -1,0 +1,7 @@
+.tools/
+.test-output-*/
+evidence/detail-review.png
+*.tar.gz
+*.bundle
+node_modules/
+.env

@@ -1,0 +1,13 @@
+{
+  "name": "afterglow-token-radar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An offline, reproducible token launch radar from a sealed DefiLlama snapshot.",
+  "license": "MIT",
+  "engines": {"node": ">=22.18.0"},
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node main.ts"
+  }
+}

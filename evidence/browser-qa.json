@@ -1,0 +1,182 @@
+{
+  "targetId": "00485A69F1D13ECE01F8B36B9D0C6C45",
+  "checks": [
+    {
+      "name": "initial board is real, offline and within viewport",
+      "result": {
+        "pass": true,
+        "rows": 8,
+        "height": 1257,
+        "width": 1440
+      }
+    },
+    {
+      "name": "range marker represents base value",
+      "result": {
+        "expected": 22.932934189039013,
+        "actual": 22.952322738386307,
+        "pass": true
+      }
+    },
+    {
+      "name": "all 192 protocol inspectors render their actual farm plans",
+      "result": {
+        "pass": true,
+        "count": 192,
+        "errors": []
+      }
+    },
+    {
+      "name": "empty state and reset",
+      "result": {
+        "pass": true
+      }
+    },
+    {
+      "name": "name sorting changes displayed order",
+      "result": {
+        "names": [
+          "3F",
+          "3Jane Lending",
+          "9Summits",
+          "AZverse Perps",
+          "Abstract",
+          "Aegis YUSD",
+          "Aftermath afLP",
+          "Agni Finance"
+        ],
+        "pass": true
+      }
+    },
+    {
+      "name": "saved shortlist",
+      "result": {
+        "pass": true
+      }
+    },
+    {
+      "name": "budget adjustment and checklist persistence",
+      "result": {
+        "pass": true
+      }
+    },
+    {
+      "name": "methodology dialog",
+      "result": {
+        "pass": true
+      }
+    },
+    {
+      "name": "mobile contains its wide table in a scroll region",
+      "result": {
+        "pass": true,
+        "width": 390,
+        "documentWidth": 850,
+        "wrap": [
+          [
+            "",
+            "visible",
+            375
+          ],
+          [
+            "board",
+            "visible",
+            343
+          ],
+          [
+            "table-wrap",
+            "auto",
+            343
+          ]
+        ],
+        "overflow": [
+          [
+            "TABLE",
+            "",
+            850
+          ],
+          [
+            "THEAD",
+            "",
+            850
+          ],
+          [
+            "TR",
+            "",
+            850
+          ],
+          [
+            "TH",
+            "value-col",
+            161.5
+          ],
+          [
+            "TH",
+            "",
+            93.5
+          ],
+          [
+            "BUTTON",
+            "",
+            26.109375
+          ],
+          [
+            "TH",
+            "",
+            76.5
+          ],
+          [
+            "BUTTON",
+            "",
+            42.3125
+          ],
+          [
+            "TH",
+            "",
+            76.5
+          ],
+          [
+            "BUTTON",
+            "",
+            47.71875
+          ],
+          [
+            "TH",
+            "",
+            195
+          ],
+          [
+            "TH",
+            "",
+            25
+          ]
+        ]
+      }
+    },
+    {
+      "name": "filtered below-floor Lending view has only real matching rows",
+      "result": {
+        "slugs": [
+          "flux-finance",
+          "project-0",
+          "current",
+          "mystic-finance-lending",
+          "marginfi-lending",
+          "templar-lending",
+          "native-credit-pool",
+          "fira"
+        ],
+        "count": "12 of 192 research leads",
+        "pass": true
+      }
+    },
+    {
+      "name": "no browser exceptions or network attempts",
+      "result": {
+        "pass": true,
+        "exceptions": [],
+        "network": []
+      }
+    }
+  ]
+}

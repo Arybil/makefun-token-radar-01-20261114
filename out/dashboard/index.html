@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Afterglow — Token launch radar</title>
+  <link rel="stylesheet" href="app.css">
+  <script defer src="../data.js"></script>
+  <script defer src="model.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <aside class="rail">
+    <a class="brand" href="#" aria-label="Afterglow radar home"><span class="mark">a<span>·</span></span><b>afterglow</b></a>
+    <div class="rail-label">RESEARCH WORKSPACE</div>
+    <nav aria-label="Main navigation">
+      <button id="nav-radar" class="nav active"><span>◉</span> Launch radar <small>01</small></button>
+      <button id="nav-watch" class="nav"><span>◇</span> House watchlist</button>
+      <button id="nav-method" class="nav"><span>≡</span> Model & evidence</button>
+    </nav>
+    <div class="rail-note"><span class="live-dot"></span> SEALED EDITION<br><strong id="rail-date">14 NOV 2026</strong><p>A fixed record.<br>A reproducible view.</p></div>
+    <div class="rail-bottom">Independent research<br><b>Token value ≠ reward</b><span>Built by Arybil · MIT</span></div>
+  </aside>
+  <main>
+    <header class="topline"><div><span class="live-dot"></span> SNAPSHOT RESEARCH <span class="divider">/</span> DEFI PROTOCOLS</div><button id="method-top" class="text-button">How values are derived ↗</button></header>
+    <section class="page-heading"><div><div class="eyebrow">TOKEN LAUNCH RADAR</div><h1>Before the ticker<span>.</span></h1><p>Find the protocols worth investigating. See what the record can support.</p></div><div class="asof"><span>DATA AS OF</span><strong id="asof"></strong><small>DefiLlama · frozen snapshot</small></div></section>
+    <section class="metrics" aria-label="Snapshot coverage">
+      <div><span>Research leads</span><b id="lead-count">—</b><small>No token recorded</small></div>
+      <div><span>Watchlist coverage</span><b id="watch-count">—</b><small>House floor, fully covered</small></div>
+      <div><span>Below the $50m floor</span><b id="early-count">—</b><small>Earlier discovery candidates</small></div>
+      <div><span>Recorded-token protocols</span><b id="live-count">—</b><small>Set aside from launch ranking</small></div>
+    </section>
+    <section class="map-panel" aria-labelledby="map-title">
+      <div class="map-main"><div class="section-line"><h2 id="map-title">Value landscape</h2><span><i class="legend-dot"></i> Watchlist <i class="legend-dot muted-dot"></i> Discovery</span></div><div id="landscape" aria-label="TVL versus modeled token value scatter plot"></div></div>
+      <div class="map-explain"><div class="eyebrow">VALUE, WITH THE ASSUMPTIONS ATTACHED</div><h3>TVL × peer multiple<br>× growth × maturity</h3><p>Peer market cap, not FDV. Bands are scenarios, not confidence intervals. No launch date or airdrop is predicted.</p><button id="model-open" class="text-button">Inspect the model <span>→</span></button></div>
+    </section>
+    <section class="board" aria-label="Ranked research board">
+      <div class="board-top"><div class="tabs" role="group" aria-label="Candidate scope"><button data-scope="all" class="selected">All leads</button><button data-scope="watch">Watchlist</button><button data-scope="early">Below floor</button><button data-scope="saved">Saved <span id="saved-count">0</span></button></div><button id="export" class="text-button">Export view ↓</button></div>
+      <div class="filters"><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search protocol or chain…" aria-label="Search protocols"></label><select id="category" aria-label="Filter category"><option value="">All categories</option></select><select id="chain" aria-label="Filter chain"><option value="">All chains</option></select><select id="momentum" aria-label="Filter seven-day TVL change"><option value="">Any momentum</option><option value="positive">Growing TVL</option><option value="negative">Falling TVL</option><option value="unknown">Unreported</option></select><button id="reset" class="reset">Reset</button></div>
+      <div class="result-line"><span id="result-count" role="status" aria-live="polite"></span><span>VALUE RANK <b>↓</b> · USD · <span id="sort-note">base scenario</span></span></div>
+      <div class="table-wrap"><table><thead><tr><th class="rank-col"><button data-sort="rank"># ↕</button></th><th><button data-sort="name">Protocol ↕</button></th><th class="value-col"><button data-sort="implied_value_usd">Implied token value ↓</button></th><th><button data-sort="tvl_usd">TVL ↕</button></th><th><button data-sort="change_7d">7d TVL ↕</button></th><th><button data-sort="tracking_days">Tracked ↕</button></th><th>Farm approach / next step</th><th><span class="sr-only">Save</span></th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div id="empty" class="empty" hidden><h3>No protocols match this view.</h3><p>Try another category, chain or search term.</p><button id="empty-reset">Clear filters</button></div>
+      <footer class="table-footer"><span id="page-info"></span><div><button id="prev" aria-label="Previous page">←</button><button id="next" aria-label="Next page">→</button></div></footer>
+    </section>
+    <footer class="footnote">A missing token record is a research lead, never proof. TVL may be shared across protocols; values must not be added. <button id="limits-open">Read limitations</button></footer>
+  </main>
+  <dialog id="detail" aria-labelledby="detail-title"><div id="detail-content"></div></dialog>
+  <dialog id="method" aria-labelledby="method-title"><div class="dialog-head"><span class="eyebrow">EVIDENCE & ASSUMPTIONS</span><button data-close="method" class="close" aria-label="Close methodology">×</button></div><div id="method-content"></div></dialog>
+  <div id="toast" role="status"></div>
+</body>
+</html>

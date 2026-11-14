@@ -1,0 +1,68 @@
+{
+  "native_hermes_session_id": "20261114_122428_4af4b1",
+  "runtime": "Official Node 22.22.1 with native TypeScript support",
+  "node_tests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "browser_checks": 11,
+  "all_inspectors_tested": 192,
+  "protocols": 192,
+  "watchlist_covered": 40,
+  "below_floor": 134,
+  "dashboard_files": 4,
+  "dashboard_bytes": 44639,
+  "dossier_bytes": 1433243,
+  "dossier_text_bytes": 44976,
+  "dossier_source_truncated": false,
+  "screenshots": [
+    {
+      "path": "/home/administrator/makefun-bounties/entries/token-radar-01/screenshots/1-board.jpg",
+      "bytes": 352269,
+      "dimensions": [
+        1440,
+        1280
+      ],
+      "sha256": "46ef1a97035e0c14a8988453622131684793d054361ae9ce5307f7efd73159eb"
+    },
+    {
+      "path": "/home/administrator/makefun-bounties/entries/token-radar-01/screenshots/2-detail.jpg",
+      "bytes": 352270,
+      "dimensions": [
+        1440,
+        1050
+      ],
+      "sha256": "6047a2e569f939f2926d449c9c960080b88a4d3c219a12f0030dd950d19cbbb9"
+    },
+    {
+      "path": "/home/administrator/makefun-bounties/entries/token-radar-01/screenshots/3-filtered.jpg",
+      "bytes": 335728,
+      "dimensions": [
+        1440,
+        1280
+      ],
+      "sha256": "c08430b6a9a76d15456c7d693426e5ae9696972a1ee212017abd77374c425976"
+    }
+  ],
+  "hashes": {
+    "board.json": "dc8c8e5164d11aad7f114894f0fbdf6bdc91ce6e9d430848219de2421cbcfe56",
+    "dashboard/app.css": "9197dbbc2f57a7bbcad7ae485bf1d44e74173f3411b4308eaa0cf4e80b57b99b",
+    "dashboard/app.js": "b187f0dfbe80b1b4de443cdc82ad1daa4506099297e9ea419e065c130d69bc3d",
+    "dashboard/index.html": "88f5c9e01e68719dee9d6dccd19fab21f955982b15a85e616b08c659f4c84c6d",
+    "dashboard/model.js": "13511f230b378513bbe80c7e04ec52da4d4500f8d3ccd7da03acefefb6c539d0",
+    "data.js": "b84ee56ac57997f6f5183e0b914bc8a4e40a6d0903b701cc905a6338af600e10",
+    "dossier.json": "7c3995fd73039dea471be84ee46229c4f7df16b100cf5b7872e60757bb07932a",
+    "screenshots/1-board.jpg": "46ef1a97035e0c14a8988453622131684793d054361ae9ce5307f7efd73159eb",
+    "screenshots/2-detail.jpg": "6047a2e569f939f2926d449c9c960080b88a4d3c219a12f0030dd950d19cbbb9",
+    "screenshots/3-filtered.jpg": "c08430b6a9a76d15456c7d693426e5ae9696972a1ee212017abd77374c425976"
+  },
+  "limits": {
+    "dashboard_bytes": 4194304,
+    "board_bytes": 8388608,
+    "dossier_bytes": 1572864,
+    "screenshot_bytes": 524288,
+    "screenshot_max_side": 1440,
+    "screenshot_min_side": 800
+  },
+  "scope": "Local only; no publish, remote, bundle or submission. Server-only gate/judge not run."
+}
